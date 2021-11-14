@@ -1,5 +1,12 @@
 package jm.task.core.jdbc.util;
 
+import jm.task.core.jdbc.model.User;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
+
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -14,6 +21,7 @@ public class Util {
     private final String DB_USER_PASSWORD;
 
     private Connection connection = null;
+    private static final SessionFactory sessionFactory = buildSessionFactory();
 
     public Util() {
         if(flagMysql) {
@@ -29,6 +37,24 @@ public class Util {
             DB_USER_NAME = "admin";
             DB_USER_PASSWORD = "12345678";
         }
+    }
+
+    private static SessionFactory buildSessionFactory() {
+        System.out.println("Создание сессии");
+        try {
+            return new Configuration().configure(new File("src/main/resources/hibernate.cfg.xml")).buildSessionFactory();
+        } catch (Throwable e) {
+            System.err.println("Failed to create sessionFactory object." + e);
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
+    public static SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
+    public static void shutdown() {
+        getSessionFactory().close();
     }
 
     public Connection getConnection() {
