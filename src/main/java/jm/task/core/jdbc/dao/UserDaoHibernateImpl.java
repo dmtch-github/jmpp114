@@ -9,46 +9,61 @@ import java.util.List;
 import java.util.logging.Logger;
 
 public class UserDaoHibernateImpl implements UserDao {
-    private final Logger log = Logger.getLogger(Class.class.getName());
-    private SessionFactory sessionFactory;
+    private final Logger log = Logger.getLogger(UserDaoHibernateImpl.class.getName());
+    private final SessionFactory factory;
 
     public UserDaoHibernateImpl() {
-         sessionFactory = Util.getSessionFactory();
-        System.out.println("sessionFactory = " + sessionFactory);
+        factory = Util.getSessionFactoryHibernate();
     }
 
 
     @Override
     public void createUsersTable() {
-
+        Session session = factory.getCurrentSession();
+        session.beginTransaction();
+        session.createSQLQuery(Util.SQL_CMD_CREATE_TABLE).executeUpdate(); //TODO если таблица создана, то будет исключение
+        session.getTransaction().commit();
     }
 
     @Override
     public void dropUsersTable() {
-
+        Session session = factory.getCurrentSession();
+        session.beginTransaction();
+        session.createSQLQuery("DROP TABLE IF EXISTS users;").executeUpdate();
+        session.getTransaction().commit();
     }
 
     @Override
     public void saveUser(String name, String lastName, byte age) {
-
+        Session session = factory.getCurrentSession();
+        User user = new User(name, lastName, age);
+        session.beginTransaction();
+        session.save(user);
+        session.getTransaction().commit();
     }
 
     @Override
     public void removeUserById(long id) {
-
+        Session session = factory.getCurrentSession();
+        session.beginTransaction();
+        session.createQuery("DELETE FROM User WHERE id="+id).executeUpdate();
+        session.getTransaction().commit();
     }
 
     @Override
     public List<User> getAllUsers() {
-        System.out.println("\nЧтение записей таблицы");
-        @SuppressWarnings("unchecked")
-        List<User> list = (List<User>)sessionFactory.openSession().createQuery("from User").list();
-        System.out.println("Вот что считали = " + list);
-        return list;
+        Session session = factory.getCurrentSession();
+        session.beginTransaction();
+        List<User> users = session.createQuery("FROM User").list();
+        session.getTransaction().commit();
+        return users;
     }
 
     @Override
     public void cleanUsersTable() {
-
+        Session session = factory.getCurrentSession();
+        session.beginTransaction();
+        session.createQuery("DELETE FROM User").executeUpdate();
+        session.getTransaction().commit();
     }
 }

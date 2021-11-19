@@ -6,16 +6,12 @@ import jm.task.core.jdbc.service.UserServiceImpl;
 import jm.task.core.jdbc.util.Util;
 import org.hibernate.Session;
 
+import java.util.List;
+
 
 public class Main {
 
     public static void main(String[] args) {
-
-        Session session = Util.getSessionFactory().openSession();
-        session.close();
-        Util.shutdown();
-        System.exit(0);
-
 
         UserService userService = new UserServiceImpl();
 

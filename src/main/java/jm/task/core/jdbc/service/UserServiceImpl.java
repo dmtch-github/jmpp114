@@ -6,7 +6,6 @@ import jm.task.core.jdbc.dao.UserDaoJDBCImpl;
 import jm.task.core.jdbc.model.User;
 
 import java.util.List;
-import java.util.Locale;
 
 public class UserServiceImpl implements UserService {
 
@@ -14,6 +13,7 @@ public class UserServiceImpl implements UserService {
 
     public UserServiceImpl() {
         userDao = new UserDaoHibernateImpl();
+        //userDao = new UserDaoJDBCImpl();
     }
 
     public void createUsersTable() {
